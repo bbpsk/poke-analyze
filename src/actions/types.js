@@ -1,2 +1,2 @@
 const addPokemon = 'ADD_POKEMON'
-const clear = 'CLEAR_LIST'
+const clearAll = 'CLEAR_ALL'

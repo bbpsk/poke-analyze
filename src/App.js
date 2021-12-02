@@ -1,4 +1,5 @@
 import './App.css';
+import Buttons from './components/Buttons';
 import SearchBar from './components/Search';
 import Table from './components/Table';
 
@@ -14,10 +15,7 @@ function App() {
         <h4 className="pt-5">Pokemon Team:</h4>
         <SearchBar/>
         <Table/>
-        <div className='d-flex justify-content-evenly m-3'>
-          <button className='btn btn-dark rounded-pill'>Analyze</button>
-          <button className='btn btn-dark rounded-pill'>Clear</button>
-        </div>
+        <Buttons/>
       </div>
     </div>
   );

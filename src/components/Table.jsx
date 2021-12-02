@@ -1,21 +1,57 @@
 import React from 'react'
+import {useSelector} from 'react-redux'
+import { PokeStats } from './PokeStats';
 
 const Table = () => {
-    const members = [1,2,3,4,5,6];
+    let index = [1,2,3,4,5,6];
+    const pokes = useSelector(state => state.team);
+    console.log(pokes)
+
     return (
-      <div className="border mt-4"> 
-        <div className="d-flex justify-content-between p-2 gray">
-            <h5>.</h5>
-            <h5>Pokemon</h5>
-            <h5>Strengths</h5>
-            <h5>Weaknesses</h5>
-        </div>
-        {members.map(number => {
-            return <div className='my-2 p-2 border-bottom'>
-                <p className=''>#{number}</p>
-            </div>
+      <table className="table table-striped mt-4"> 
+        <thead className="gray">
+        <tr>
+            <th scope='col'>.</th>
+            <th scope='col'>Pokemon</th>
+            <th scope='col'>Strengths</th>
+            <th scope='col'>Weaknesses</th>
+        </tr>
+        </thead>
+        <tbody>
+        {index.map(number => {
+            return <tr key={number} className=''>
+                <th scope='row'>#{number}</th>
+            {pokes.length >= number 
+                ? 
+                <>
+                <td>
+                  <div className='d-flex'>
+                    <div>
+                        <p className=' fw-bold'>{pokes[number-1].name}</p>
+
+                        <small>{pokes[number-1].types[0].type.name}</small>
+                        {pokes[number-1].types.length > 1 
+                            ? 
+                            <small>/{pokes[number-1].types[1].type.name}</small> 
+                            : <></>
+                        }
+                    </div>
+                    <img src={pokes[number-1].sprites.front_default}/>
+                  </div>
+                </td> 
+                <PokeStats number={number}/>
+                </>
+                : 
+                <>
+                <td></td> 
+                <td></td>
+                <td></td>
+                </>
+            }
+        </tr>
         })}
-      </div>
+        </tbody>
+      </table>
     )
 }
 

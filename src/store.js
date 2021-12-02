@@ -1,7 +1,12 @@
-import { createStore  } from "redux";
-import reducers from "./reducers/combine";
+import {configureStore} from '@reduxjs/toolkit'
+import team from './reducers/teamReducer'
+import stats from './reducers/statsReducer';
 
-const initialState = {}
-const store = createStore(reducers, initialState);
+const store = configureStore({
+    reducer: {
+        team,
+        stats
+    }
+});
 
 export default store

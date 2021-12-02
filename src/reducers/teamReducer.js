@@ -1,14 +1,15 @@
-import {addPokemon, clear} from '../actions/types'
+import {createSlice} from '@reduxjs/toolkit'
 
-const initial = {
-    Pokemon: []
-}
+const initial = []
 
-const teamReducer = (state = initial, action) => {
-    switch(action.type){
-        default: 
-            return state
+const teamSlice = createSlice({
+    name: 'team',
+    initialState: initial,
+    reducers: {
+        add: (state, {payload}) => [...state, payload],
+        clear: () => [],
     }
-}
+});
 
-export default teamReducer
+export const {add, clear} = teamSlice.actions;
+export default teamSlice.reducer;
