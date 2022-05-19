@@ -18,7 +18,10 @@ export const PokeStats = ({number}) => {
             </td>
             <td>
                 {stats[number].weaknesses.map(weakness => {
-                    return <p key={number+weakness}>{weakness}</p>
+                    if(stats[number].criticals.includes(weakness)){
+                        return <p key={number+weakness} className='red'>{weakness}</p>
+                    }
+                    else return <p key={number+weakness}>{weakness}</p>
                 })}
             </td>
         </>
