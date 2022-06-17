@@ -1,57 +1,66 @@
-import React from 'react'
-import {useSelector, useDispatch} from 'react-redux'
-import { clear } from '../reducers/teamReducer';
-import { removeAll } from '../reducers/statsReducer';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { clear, selectStats, selectMemebers } from "../store/teamSlice";
+import { analyzeStats } from "../utils";
 
 const Buttons = () => {
-    const dispatch = useDispatch();
-    const stats = useSelector(state => state.stats);
+  const dispatch = useDispatch();
+  const stats = useSelector(selectStats);
+  const pokes = useSelector(selectMemebers);
 
-    const clearTable = () => {
-        dispatch(clear())
-        dispatch(removeAll())
-    }
-    const analyze = () => {
-        const div = document.getElementById('results');
-        let teamWeaks = []
-        let teamStrs = []
-        let criticals = []
+  const [showResults, setShowResults] = useState(false);
+  const [teamStats, setTeamStats] = useState({
+    blindSpots: [],
+    weaknesses: [],
+  });
 
-        for(let member of stats){
-            console.log(member)
-            teamWeaks = teamWeaks.concat(member.weaknesses)
-            teamStrs = teamStrs.concat(member.strengths)
-        }
-        console.log(teamWeaks)
+  const clearTable = () => {
+    dispatch(clear());
+    setShowResults(false);
+  };
+  const analyze = async () => {
+    const teamWeaks = stats
+      .map((member) =>
+        member.weaknesses.map((weak) => Array(member.pokemonUsing).fill(weak))
+      )
+      .flat(2);
+    const teamStrs = stats.map((member) => member.strengths).flat();
 
-        for(let weakness of teamWeaks){
-            let count = teamWeaks.reduce((total, curr) => {
-                if(curr === weakness) return total + 1
-                return total + 0
-            }, 0); //find how many times the weakness appears
+    console.log("total weaknesses:", teamWeaks, "total strengths:", teamStrs);
+    const res = await analyzeStats(teamWeaks, teamStrs, pokes.length);
+    setTeamStats(res);
+    setShowResults(true);
+  };
 
-            if(count >= (stats.length-1)/2){
-                console.log(weakness, count)
-                criticals.push(weakness)
-            }
-        }
-        criticals = [...new Set(criticals)]
-        console.log(criticals)
-        div.innerText = `Half of your team or more is weak to: ${criticals}`
-    }
-
-    return (
-      <div className='d-flex justify-content-evenly m-3'>
-        <button className='btn btn-dark rounded-pill' onClick={analyze}>
-            Analyze
+  return (
+    <>
+      <div className="d-flex justify-content-evenly m-3">
+        <button className="btn btn-dark rounded-pill" onClick={analyze}>
+          Analyze
         </button>
-        <button className='btn btn-dark rounded-pill' onClick={clearTable}>
-            Clear
+        <button className="btn btn-dark rounded-pill" onClick={clearTable}>
+          Clear
         </button>
-        <div id='results' className='mt-5'>
-        </div>
       </div>
-    )
-}
+      {showResults && (
+        <div className="">
+          <p>Team Weaknesses: </p>
+          {teamStats.weaknesses.length === 0 && <div className="px-4">none</div>}
+          <ul className="row">
+            {teamStats.weaknesses.map((weakness) => (
+              <li key={weakness} className="col-4">{weakness}</li>
+            ))}
+          </ul>
+          <p>Your team has no super effective options against these types: </p>
+          <ul className="row">
+            {teamStats.blindSpots.map((spot) => (
+              <li key={spot} className="col-4">{spot}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </>
+  );
+};
 
-export default Buttons
+export default Buttons;
