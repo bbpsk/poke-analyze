@@ -6,17 +6,13 @@ import config from "../config";
 // an object with three arrays containing the type names. Critical weaknesses are 
 // a subset of weaknesses
 
-// @param type1: string, type2: string
-// @return { strengths: string[], weaknesses: string[], criticals: string[] }
 export function calcStats(type1, type2){
-    console.log(type1.name, type1.damage_relations);
     let weaks = type1.damage_relations.double_damage_from;
     let resists = type1.damage_relations.half_damage_from;
     let strengths = type1.damage_relations.double_damage_to;
     let immunes = type1.damage_relations.no_damage_from;
 
     if(type2){
-        console.log(type2.name, type2.damage_relations);
         weaks = [...weaks, ...type2.damage_relations.double_damage_from];
         resists = [...resists, ...type2.damage_relations.half_damage_from];
         strengths = [...strengths, ...type2.damage_relations.double_damage_to];

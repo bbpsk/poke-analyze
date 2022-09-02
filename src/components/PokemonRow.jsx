@@ -5,9 +5,9 @@ import { findTypeMatch } from "../utils";
 const PokemonRow = ({ pokemon }) => {
   const stat = useSelector((state) => {
     const allStats = state.team.stats;
-    const stat = findTypeMatch(pokemon.types, allStats);
-    console.log("row:", pokemon.name, "stats:", stat);
-    return stat;
+    const stats = findTypeMatch(pokemon.types, allStats);
+    console.log("row:", pokemon.name, "stats:", stats);
+    return stats;
   });
 
   return (
@@ -15,12 +15,10 @@ const PokemonRow = ({ pokemon }) => {
       <td>
         <div className="d-flex">
           <div>
-            <p className=" fw-bold">{pokemon.name}</p>
+            <p className="fw-bold">{pokemon.name}</p>
             <small>{pokemon.types[0].type.name}</small>
-            {pokemon.types.length > 1 ? (
+            {pokemon.types.length > 1 && (
               <small>/{pokemon.types[1].type.name}</small>
-            ) : (
-              <></>
             )}
           </div>
           <div className="img-container">

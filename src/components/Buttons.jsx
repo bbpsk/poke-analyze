@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { clear, selectStats, selectMemebers } from "../store/teamSlice";
-import { analyzeStats } from "../utils";
+import { analyzeStats, findTypeMatch } from "../utils";
 
 const Buttons = () => {
   const dispatch = useDispatch();
@@ -19,15 +19,15 @@ const Buttons = () => {
     setShowResults(false);
   };
   const analyze = async () => {
-    const teamWeaks = stats
-      .map((member) =>
-        member.weaknesses.map((weak) => Array(member.pokemonUsing).fill(weak))
-      )
-      .flat(2);
-    const teamStrs = stats.map((member) => member.strengths).flat();
-
-    console.log("total weaknesses:", teamWeaks, "total strengths:", teamStrs);
-    const res = await analyzeStats(teamWeaks, teamStrs, pokes.length);
+    let teamWeaks = [];
+    let teamStrs = [];
+    pokes.forEach((member) => {
+      const memberStats = findTypeMatch(member.types, stats);
+      teamWeaks.push(memberStats.weaknesses);
+      teamStrs.push(memberStats.strengths);
+    })
+    console.log("total weaknesses:", teamWeaks.flat(), "total strengths:", teamStrs.flat());
+    const res = await analyzeStats(teamWeaks.flat(), teamStrs.flat(), pokes.length);
     setTeamStats(res);
     setShowResults(true);
   };
@@ -44,8 +44,9 @@ const Buttons = () => {
       </div>
       {showResults && (
         <div className="">
-          <p>Team Weaknesses: </p>
-          {teamStats.weaknesses.length === 0 && <div className="px-4">none</div>}
+          {teamStats.weaknesses.length !== 0 && (
+            <p>Half of your team or more is weak to: </p>
+          )}
           <ul className="row">
             {teamStats.weaknesses.map((weakness) => (
               <li key={weakness} className="col-4">{weakness}</li>

@@ -30,7 +30,6 @@ const getTypes = createAsyncThunk('team/getTypes',
           ...stats,
           type1: type1.type.name,
           type2: type2 ? type2.type.name : null,
-          pokemonUsing: 1
         };
     }
 )
@@ -40,12 +39,12 @@ const initial = {
     stats: [{
         type1: '',
         type2: '',
-        pokemonUsing: 0,
         strengths: [],
         weaknesses: [],
         criticals: []
     }],
-    status: 'ok'
+    status: 'ok',
+    error: ''
 };
 
 const teamReducer = createReducer(initial, (builder) => {
@@ -54,10 +53,13 @@ const teamReducer = createReducer(initial, (builder) => {
     .addCase(getPokemon.pending, (state) => {
         state.status = 'memberLoading';
     })
-    .addCase(getPokemon.rejected, (state) => {
-        state.status = 'hasError'
+    .addCase(getPokemon.rejected, (state, action) => {
+        console.log(action.error);
+        state.status = action.error.message.includes('404') ? 'has404Error' : 'hasSearchError';
+        state.error = action.error.message;
     })
     .addCase(getPokemon.fulfilled, (state, action) => {
+        console.log('added pokemon success');
         state.status = 'ok';
         state.members = [...state.members, action.payload];
     })
@@ -66,7 +68,7 @@ const teamReducer = createReducer(initial, (builder) => {
     })
     .addCase(getTypes.rejected, (state, action) => {
         console.log(action.error);
-        state.status = 'hasError';
+        state.status = 'hasTypesError';
     })
     .addCase(getTypes.fulfilled, (state, action) => {
         state.status = 'ok'
